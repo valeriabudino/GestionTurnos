@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title style="color: red;">Panel Médico - Gestión de Disponibilidad</title>
+    <!-- Tailwind CSS para diseño rápido y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para iconos modernos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts para una tipografía limpia y profesional -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+
+    <!-- Navbar Principal -->
+    <nav class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 text-white p-2.5 rounded-lg flex items-center justify-center">
+                <i class="fa-solid fa-calendar-check text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-slate-900 leading-none">MediTurnos</h1>
+                <span class="text-xs text-slate-500 font-medium">Panel del Profesional</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-right hidden sm:block">
+                <p class="font-semibold text-sm text-slate-900">Dr. Gabiota</p>
+                <p class="text-xs text-slate-500">Cardiología</p>
+            </div>
+            <div class="h-10 w-10 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold">
+                DG
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal -->
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- COLUMNA IZQUIERDA: Configuraciones Globales (4 Columnas de 12) -->
+        <section class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Tarjeta: Ajustes Generales -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-sliders text-blue-600 text-lg"></i>
+                    <h2 class="font-bold text-slate-900 text-base">Ajustes Globales</h2>
+                </div>
+                <p class="text-xs text-slate-500 mb-6">Configurá las reglas por defecto para la generación automática de tus turnos diarios.</p>
+                
+                <div class="space-y-4">
+                    <!-- Duración de turno -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2" for="duracion-turno">
+                            Duración de Consulta
+                        </label>
+                        <select id="duracion-turno" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium">
+                            <option value="15">15 Minutos</option>
+                            <option value="20" selected>20 Minutos</option>
+                            <option value="30">30 Minutos</option>
+                            <option value="45">45 Minutos</option>
+                            <option value="60">60 Minutos</option>
+                        </select>
+                    </div>
+
+                    <!-- Antelación mínima -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2" for="antelacion">
+                            Antelación Mínima de Reserva
+                        </label>
+                        <select id="antelacion" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium">
+                            <option value="0">Sin restricción</option>
+                            <option value="12">12 Horas de anticipación</option>
+                            <option value="24" selected>24 Horas de anticipación</option>
+                            <option value="48">48 Horas de anticipación</option>
+                        </select>
+                    </div>
+
+                    <!-- Margen entre turnos -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2" for="margen">
+                            Margen / Limpieza entre citas
+                        </label>
+                        <select id="margen" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium">
+                            <option value="0" selected>Sin sobreturno / margen</option>
+                            <option value="5">5 Minutos de descanso</option>
+                            <option value="10">10 Minutos de descanso</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-blue-50/70 border border-blue-100 rounded-xl flex gap-3">
+                    <i class="fa-solid fa-circle-info text-blue-600 text-lg mt-0.5"></i>
+                    <p class="text-xs text-blue-800 leading-relaxed">
+                        Los cambios guardados aplicarán de forma inmediata para las semanas subsiguientes. Los turnos ya reservados no sufrirán modificaciones.
+                    </p>
+                </div>
+
+                <button onclick="guardarConfiguracion()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-blue-100 hover:shadow-lg transition-all mt-6 text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar Ajustes
+                </button>
+            </div>
+
+            <!-- Tarjeta: Excepciones / Bloqueos -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-calendar-minus text-red-500 text-lg"></i>
+                    <h2 class="font-bold text-slate-900 text-base">Bloqueos de Agenda</h2>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">Desactivá días completos por congresos, vacaciones o feriados personales.</p>
+                
+                <!-- Añadir Excepción -->
+                <div class="flex gap-2 mb-4">
+                    <input type="date" id="fecha-excepcion" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                    <button onclick="agregarExcepcion()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-4 py-2 rounded-xl text-xs transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> Bloquear
+                    </button>
+                </div>
+
+                <!-- Lista de Excepciones -->
+                <div id="lista-excepciones" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Lista inicial vacía o cargada con valores de prueba -->
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200/60" id="item-exc-1">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-regular fa-calendar text-slate-400"></i>
+                            <span class="text-xs font-semibold text-slate-700">2026-06-15</span>
+                            <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">Feriado</span>
+                        </div>
+                        <button onclick="eliminarExcepcion('item-exc-1')" class="text-slate-400 hover:text-red-500 p-1 transition-colors">
+                            <i class="fa-regular fa-trash-can text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COLUMNA DERECHA: Grilla Semanal Horaria (8 Columnas de 12) -->
+        <section class="lg:col-span-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+                <div>
+                    <h2 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-blue-600"></i> Horario Semanal Recurrente
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">Configurá las franjas horarias en las que ofrecés consultas cada día.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">Agenda Activa</span>
+                </div>
+            </div>
+
+            <!-- Listado de Días -->
+            <div class="space-y-5" id="grilla-semanal">
+                
+                <!-- Lunes -->
+                <div class="day-row p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all" id="row-lunes">
+                    <div class="flex items-center gap-4 min-w-[150px]">
+                        <!-- Toggle Switch -->
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer" onchange="toggleDia('lunes')">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                        <span class="font-bold text-slate-800 text-base" id="lbl-lunes">Lunes</span>
+                    </div>
+
+                    <!-- Bloques horarios -->
+                    <div class="flex-grow flex flex-wrap gap-2 items-center" id="slots-lunes">
+                        <!-- Rango 1 -->
+                        <div class="time-slot bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-xl font-medium text-sm flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-xs text-blue-500"></i>
+                            <span>08:00 - 12:00</span>
+                            <button onclick="eliminarSlot(this)" class="hover:text-red-500 text-blue-400 transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                        <!-- Rango 2 -->
+                        <div class="time-slot bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-xl font-medium text-sm flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-xs text-blue-500"></i>
+                            <span>14:00 - 18:00</span>
+                            <button onclick="eliminarSlot(this)" class="hover:text-red-500 text-blue-400 transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Acción agregar -->
+                    <button onclick="abrirModalAgregar('lunes')" class="btn-add flex items-center gap-1 text-xs text-blue-600 font-semibold hover:text-blue-800 hover:bg-blue-50/80 border border-transparent hover:border-blue-100 px-3 py-2 rounded-xl transition-all self-start sm:self-auto">
+                        <i class="fa-solid fa-plus"></i> Rango
+                    </button>
+                </div>
+
+                <!-- Martes -->
+                <div class="day-row p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all" id="row-martes">
+                    <div class="flex items-center gap-4 min-w-[150px]">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer" onchange="toggleDia('martes')">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                        <span class="font-bold text-slate-800 text-base" id="lbl-martes">Martes</span>
+                    </div>
+
+                    <div class="flex-grow flex flex-wrap gap-2 items-center" id="slots-martes">
+                        <div class="time-slot bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-xl font-medium text-sm flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-xs text-blue-500"></i>
+                            <span>09:00 - 13:00</span>
+                            <button onclick="eliminarSlot(this)" class="hover:text-red-500 text-blue-400 transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="abrirModalAgregar('martes')" class="btn-add flex items-center gap-1 text-xs text-blue-600 font-semibold hover:text-blue-800 hover:bg-blue-50/80 border border-transparent hover:border-blue-100 px-3 py-2 rounded-xl transition-all self-start sm:self-auto">
+                        <i class="fa-solid fa-plus"></i> Rango
+                    </button>
+                </div>
+
+                <!-- Miércoles (Inactivo inicialmente) -->
+                <div class="day-row p-4 rounded-xl border border-slate-100 bg-slate-100/40 opacity-60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all" id="row-miercoles">
+                    <div class="flex items-center gap-4 min-w-[150px]">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" onchange="toggleDia('miercoles')">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                        <span class="font-bold text-slate-400 text-base" id="lbl-miercoles">Miércoles</span>
+                    </div>
+
+                    <div class="flex-grow flex flex-wrap gap-2 items-center" id="slots-miercoles">
+                        <span class="text-xs text-slate-400 italic font-medium no-disponible">No se atiende este día</span>
+                    </div>
+
+                    <button onclick="abrirModalAgregar('miercoles')" disabled class="btn-add opacity-50 cursor-not-allowed flex items-center gap-1 text-xs text-blue-600 font-semibold border border-transparent px-3 py-2 rounded-xl transition-all self-start sm:self-auto">
+                        <i class="fa-solid fa-plus"></i> Rango
+                    </button>
+                </div>
+
+                <!-- Jueves -->
+                <div class="day-row p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all" id="row-jueves">
+                    <div class="flex items-center gap-4 min-w-[150px]">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer" onchange="toggleDia('jueves')">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                        <span class="font-bold text-slate-800 text-base" id="lbl-jueves">Jueves</span>
+                    </div>
+
+                    <div class="flex-grow flex flex-wrap gap-2 items-center" id="slots-jueves">
+                        <div class="time-slot bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-xl font-medium text-sm flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-xs text-blue-500"></i>
+                            <span>08:00 - 12:00</span>
+                            <button onclick="eliminarSlot(this)" class="hover:text-red-500 text-blue-400 transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="time-slot bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-xl font-medium text-sm flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-xs text-blue-500"></i>
+                            <span>14:00 - 18:00</span>
+                            <button onclick="eliminarSlot(this)" class="hover:text-red-500 text-blue-400 transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="abrirModalAgregar('jueves')" class="btn-add flex items-center gap-1 text-xs text-blue-600 font-semibold hover:text-blue-800 hover:bg-blue-50/80 border border-transparent hover:border-blue-100 px-3 py-2 rounded-xl transition-all self-start sm:self-auto">
+                        <i class="fa-solid fa-plus"></i> Rango
+                    </button>
+                </div>
+
+                <!-- Viernes -->
+                <div class="day-row p-4 rounded-xl border border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all" id="row-viernes">
+                    <div class="flex items-center gap-4 min-w-[150px]">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer" onchange="toggleDia('viernes')">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                        <span class="font-bold text-slate-800 text-base" id="lbl-viernes">Viernes</span>
+                    </div>
+
+                    <div class="flex-grow flex flex-wrap gap-2 items-center" id="slots-viernes">
+                        <div class="time-slot bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-xl font-medium text-sm flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-xs text-blue-500"></i>
+                            <span>08:00 - 15:00</span>
+                            <button onclick="eliminarSlot(this)" class="hover:text-red-500 text-blue-400 transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="abrirModalAgregar('viernes')" class="btn-add flex items-center gap-1 text-xs text-blue-600 font-semibold hover:text-blue-800 hover:bg-blue-50/80 border border-transparent hover:border-blue-100 px-3 py-2 rounded-xl transition-all self-start sm:self-auto">
+                        <i class="fa-solid fa-plus"></i> Rango
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Ventana Modal: Agregar Rango Horario -->
+    <div id="modal-agregar" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-sm w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-900 text-base">Nuevo Rango (<span id="modal-dia-nombre" class="capitalize"></span>)</h3>
+                <button onclick="cerrarModalAgregar()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <input type="hidden" id="modal-dia-id">
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Desde</label>
+                    <input type="time" id="modal-desde" value="08:00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Hasta</label>
+                    <input type="time" id="modal-hasta" value="12:00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="cerrarModalAgregar()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-xl text-xs transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="confirmarAgregarSlot()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl text-xs transition-colors shadow-sm">
+                    Agregar rango
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast / Notificaciones en pantalla -->
+    <div id="toast" class="hidden fixed bottom-6 right-6 bg-slate-950 text-white px-5 py-4 rounded-2xl shadow-xl flex items-center gap-3 z-50 animate-bounce">
+        <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-lg" id="toast-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+            <p class="font-bold text-xs" id="toast-title">Acción realizada</p>
+            <p class="text-[10px] text-slate-400 leading-none mt-1" id="toast-desc">Cambios aplicados con éxito.</p>
+        </div>
+    </div>
+
+    <!-- Script de Interactividad -->
+    <script>
+        // Función: Mostrar Toast Dinámico
+        function mostrarToast(titulo, descripcion, tipo = 'success') {
+            const toast = document.getElementById('toast');
+            const tTitle = document.getElementById('toast-title');
+            const tDesc = document.getElementById('toast-desc');
+            const tIcon = document.getElementById('toast-icon');
+
+            tTitle.innerText = titulo;
+            tDesc.innerText = descripcion;
+
+            if(tipo === 'error') {
+                tIcon.className = "bg-red-500/20 text-red-400 p-2 rounded-lg";
+                tIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+            } else {
+                tIcon.className = "bg-emerald-500/20 text-emerald-400 p-2 rounded-lg";
+                tIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Función: Guardar Configuración Global
+        function guardarConfiguracion() {
+            const duracion = document.getElementById('duracion-turno').value;
+            const antelacion = document.getElementById('antelacion').value;
+            const margen = document.getElementById('margen').value;
+
+            mostrarToast(
+                'Ajustes Guardados', 
+                `Turnos configurados a ${duracion} min con ${antelacion} hs de anticipación.`
+            );
+        }
+
+        // Función: Agregar Excepción de Bloqueo
+        let excepcionCount = 1;
+        function agregarExcepcion() {
+            const dateInput = document.getElementById('fecha-excepcion');
+            const dateVal = dateInput.value;
+
+            if(!dateVal) {
+                mostrarToast('Error de fecha', 'Por favor, selecciona una fecha válida.', 'error');
+                return;
+            }
+
+            excepcionCount++;
+            const id = `item-exc-${excepcionCount}`;
+            const container = document.getElementById('lista-excepciones');
+
+            const itemHTML = `
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200/60" id="${id}">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-regular fa-calendar text-slate-400"></i>
+                        <span class="text-xs font-semibold text-slate-700">${dateVal}</span>
+                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">Bloqueado</span>
+                    </div>
+                    <button onclick="eliminarExcepcion('${id}')" class="text-slate-400 hover:text-red-500 p-1 transition-colors">
+                        <i class="fa-regular fa-trash-can text-sm"></i>
+                    </button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', itemHTML);
+            dateInput.value = '';
+            mostrarToast('Bloqueo Registrado', `Fecha ${dateVal} bloqueada en la agenda.`);
+        }
+
+        // Función: Eliminar Excepción
+        function eliminarExcepcion(id) {
+            const item = document.getElementById(id);
+            if(item) {
+                item.remove();
+                mostrarToast('Bloqueo Eliminado', 'La fecha vuelve a estar disponible.');
+            }
+        }
+
+        // Función: Activar / Desactivar Día Completo
+        function toggleDia(diaId) {
+            const row = document.getElementById(`row-${diaId}`);
+            const lbl = document.getElementById(`lbl-${diaId}`);
+            const slotsContainer = document.getElementById(`slots-${diaId}`);
+            const btnAdd = row.querySelector('.btn-add');
+            const checkbox = row.querySelector('input[type="checkbox"]');
+
+            if (checkbox.checked) {
+                // Activar día
+                row.classList.remove('bg-slate-100/40', 'opacity-60');
+                row.classList.add('bg-slate-50/50', 'border-slate-100');
+                lbl.classList.remove('text-slate-400');
+                lbl.classList.add('text-slate-800');
+                
+                // Remover aviso "No disponible"
+                const noDisp = slotsContainer.querySelector('.no-disponible');
+                if (noDisp) noDisp.remove();
+
+                // Habilitar botón de agregar
+                btnAdd.disabled = false;
+                btnAdd.classList.remove('opacity-50', 'cursor-not-allowed');
+
+                mostrarToast('Día Activado', `Agregá intervalos de atención para el ${diaId}.`);
+            } else {
+                // Desactivar día
+                row.classList.add('bg-slate-100/40', 'opacity-60');
+                row.classList.remove('bg-slate-50/50', 'border-slate-100');
+                lbl.classList.add('text-slate-400');
+                lbl.classList.remove('text-slate-800');
+
+                // Vaciar slots y poner label "No disponible"
+                slotsContainer.innerHTML = '<span class="text-xs text-slate-400 italic font-medium no-disponible">No se atiende este día</span>';
+
+                // Deshabilitar botón de agregar
+                btnAdd.disabled = true;
+                btnAdd.classList.add('opacity-50', 'cursor-not-allowed');
+
+                mostrarToast('Día Inactivado', `Se cerró la agenda para el día ${diaId}.`);
+            }
+        }
+
+        // Función: Eliminar un Rango Horario
+        function eliminarSlot(element) {
+            const slot = element.closest('.time-slot');
+            const container = slot.parentNode;
+            slot.remove();
+
+            // Si se eliminaron todos los rangos, forzar estado vacío
+            if (container.children.length === 0) {
+                container.innerHTML = '<span class="text-xs text-slate-400 italic font-medium no-disponible">Sin rangos asignados</span>';
+            }
+            mostrarToast('Intervalo Removido', 'Se actualizó la disponibilidad del día.');
+        }
+
+        // Modales de Agregar Rango Horario
+        function abrirModalAgregar(diaId) {
+            document.getElementById('modal-dia-id').value = diaId;
+            document.getElementById('modal-dia-nombre').innerText = diaId;
+            document.getElementById('modal-agregar').classList.remove('hidden');
+        }
+
+        function cerrarModalAgregar() {
+            document.getElementById('modal-agregar').classList.add('hidden');
+        }
+
+        function confirmarAgregarSlot() {
+            const diaId = document.getElementById('modal-dia-id').value;
+            const desde = document.getElementById('modal-desde').value;
+            const hasta = document.getElementById('modal-hasta').value;
+
+            // Validar que la hora "hasta" sea mayor a la de "desde"
+            if (desde >= hasta) {
+                mostrarToast('Horario Invalido', 'La hora de cierre debe ser posterior a la de inicio.', 'error');
+                return;
+            }
+
+            const container = document.getElementById(`slots-${diaId}`);
+            
+            // Remover aviso de vacío si existe
+            const emptyLabel = container.querySelector('.no-disponible');
+            if (emptyLabel) emptyLabel.remove();
+
+            const slotHTML = `
+                <div class="time-slot bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1.5 rounded-xl font-medium text-sm flex items-center gap-2">
+                    <i class="fa-regular fa-clock text-xs text-blue-500"></i>
+                    <span>${desde} - ${hasta}</span>
+                    <button onclick="eliminarSlot(this)" class="hover:text-red-500 text-blue-400 transition-colors">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                    </button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', slotHTML);
+            cerrarModalAgregar();
+            mostrarToast('Horario Agregado', `Nuevo turno de ${desde} a ${hasta} agendado.`);
+        }
+    </script>
+</body>
+</html>
